@@ -1,14 +1,14 @@
 package com.example.lottery.domain.dto.request;
 
-import com.example.lottery.domain.entity.LotteryResult;
+import com.example.lottery.domain.entity.LotteryHistory;
 
 import java.time.LocalDateTime;
 
-public record LotteryResultRequest(
+public record LotteryHistoryRequest(
     Long lotteryCount
 ) {
-    public LotteryResult toEntity(String userId, LotteryResultRequest lotteryResultRequest){
-        return LotteryResult.builder()
+    public LotteryHistory toEntity(String userId, LotteryHistoryRequest lotteryResultRequest){
+        return LotteryHistory.builder()
                 .createdAt(LocalDateTime.now())
                 .lotteryCount(lotteryResultRequest.lotteryCount())
                 .userId(userId)
