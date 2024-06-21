@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "LOTTERY_RESULTS")
+@Table(name = "LOTTERY_HISTORIES")
 public class LotteryHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
