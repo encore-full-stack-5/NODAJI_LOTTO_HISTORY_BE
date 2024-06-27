@@ -22,7 +22,8 @@ public class LotteryHistory {
     @Column(name = "PAY_CREATED_AT")
     private LocalDateTime createdAt;
     @Column(name = "USER_ID")
-    private String userId;    @Column(name = "ROUND_ID")
+    private String userId;
+    @Column(name = "ROUND_ID")
     private Long roundId;
     @Column(name = "LOTTERY_COUNT")
     private Long lotteryCount;
