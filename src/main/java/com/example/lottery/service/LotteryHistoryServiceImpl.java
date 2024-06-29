@@ -6,11 +6,16 @@ import com.example.lottery.domain.dto.response.HistoryPageResponse;
 import com.example.lottery.domain.dto.response.LotteryHistoryResponse;
 import com.example.lottery.domain.entity.LotteryHistory;
 import com.example.lottery.domain.repository.LottoHistoryRepository;
+import com.example.lottery.kafka.dto.KafkaHistoryDto;
+import com.example.lottery.kafka.dto.KafkaPayDto;
+import com.example.lottery.kafka.dto.KafkaStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +62,33 @@ public class LotteryHistoryServiceImpl implements LotteryHistoryService {
         lottoHistoryRepository.save(request.toEntity(request));
     }
 
+    @KafkaListener(topics = "history-topic")
+    public void synchronization(KafkaStatus<KafkaHistoryDto> status){
+        switch(status.status()){
+            case "history" ->{
+                System.out.println(status.data());
+                LotteryHistory history = lottoHistoryRepository.findByUserId(status.data().userId());
+                if(history == null) throw new IllegalArgumentException("해당 유저 없음");
+                history.setResult(status.data().rank());
+                history.setResultMoney(status.data().amount());
+                lottoHistoryRepository.save(history);
+            }
+        }
+    }
+
+    @KafkaListener(topics = "history-topic")
+    public void synchronization1(KafkaStatus<KafkaPayDto> status){
+        switch(status.status()){
+            case "pay" ->{
+                System.out.println(status.data());
+                LotteryHistoryRequest lotteryHistoryRequest =
+                        new LotteryHistoryRequest(status.data().id(),status.data().createAt(),status.data().round(),
+                                status.data().userId());
+                LotteryHistory entity = lotteryHistoryRequest.toEntity(lotteryHistoryRequest);
+                lottoHistoryRepository.save(entity);
+            }
+        }
+    }
 
 
 //    //특정 내역 삭제하기(내역 ID)
@@ -67,6 +99,8 @@ public class LotteryHistoryServiceImpl implements LotteryHistoryService {
 //        lottoHistoryRepository.deleteById(payId);
 //    }
 
+
+
     @Override
     public void updateResult(String userId, Long payId, LotteryResultRequest request) {
         //유저의 내역정보를 업데이트
@@ -74,13 +108,14 @@ public class LotteryHistoryServiceImpl implements LotteryHistoryService {
         LotteryHistory history = lottoHistoryRepository.findByUserId(userId);
         if(history == null) throw new IllegalArgumentException("해당 유저 없음");
 //        LotteryHistory history = lottoHistoryRepository.findById(payId).orElseThrow(() -> new IllegalArgumentException("해당 결과 ID 없음"));
-
         // 필요한 정보만 수정, 업데이트
         history.setResult(request.result());
         history.setResultMoney(request.resultMoney());
 
         lottoHistoryRepository.save(history);
     }
+
+
 
 //    //유저 모든 내역 삭제하기(유저 ID)
 //    @Override

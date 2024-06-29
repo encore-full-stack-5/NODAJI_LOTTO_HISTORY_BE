@@ -2,11 +2,13 @@ package com.example.lottery.domain.dto.request;
 
 import com.example.lottery.domain.entity.LotteryHistory;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 
 public record LotteryHistoryRequest(
         Long lotteryId,
-        LocalDateTime payCreatedAt,
+        LocalDate payCreatedAt,
         Long roundId,
         String userId
 ) {
