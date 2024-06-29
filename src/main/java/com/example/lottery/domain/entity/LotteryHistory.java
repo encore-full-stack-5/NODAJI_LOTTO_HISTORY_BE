@@ -3,6 +3,7 @@ package com.example.lottery.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,7 +21,7 @@ public class LotteryHistory {
     @Column(name = "LOTTERY_ID")
     private Long lotteryId;
     @Column(name = "PAY_CREATED_AT")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "USER_ID")
     private String userId;
     @Column(name = "ROUND_ID")
