@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -57,11 +58,13 @@ public class LotteryHistoryServiceImpl implements LotteryHistoryService {
 //        return lottoHistoryRepository.findById(payId).orElseThrow(() -> new IllegalArgumentException("해당 결과 ID 없음"));
 //    }
 
+    @Transactional
     @Override
     public void saveResult(LotteryHistoryRequest request) {
         lottoHistoryRepository.save(request.toEntity(request));
     }
 
+    @Transactional
     @KafkaListener(topics = "history-topic")
     public void synchronization(KafkaStatus<KafkaHistoryDto> status){
         switch(status.status()){
@@ -76,6 +79,7 @@ public class LotteryHistoryServiceImpl implements LotteryHistoryService {
         }
     }
 
+    @Transactional
     @KafkaListener(topics = "history-topic")
     public void synchronization1(KafkaStatus<KafkaPayDto> status){
         switch(status.status()){
