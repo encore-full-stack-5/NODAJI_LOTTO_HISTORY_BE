@@ -10,6 +10,7 @@ import java.util.List;
 public interface LottoHistoryRepository extends JpaRepository<LotteryHistory, Long> {
     //유저 ID에 따른 모든 로또 내역 가져오기
     Page<LotteryHistory> findAllByUserId(String userId, Pageable pageable);
+
     LotteryHistory findByUserId(String userId);
 
 }

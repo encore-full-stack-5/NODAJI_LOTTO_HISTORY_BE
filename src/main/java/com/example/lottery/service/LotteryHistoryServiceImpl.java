@@ -65,13 +65,15 @@ public class LotteryHistoryServiceImpl implements LotteryHistoryService {
     }
 
     @Transactional
-    @KafkaListener(topics = "history-topic")
+    @KafkaListener(topics = "update-topic")
     public void synchronization(KafkaStatus<KafkaHistoryDto> status){
         switch(status.status()){
             case "history" ->{
-                System.out.println(status.data());
-                LotteryHistory history = lottoHistoryRepository.findByUserId(status.data().userId());
-                if(history == null) throw new IllegalArgumentException("해당 유저 없음");
+                System.out.println("history data"+status.data());
+                System.out.println("history paydi" + status.data().payId());
+                LotteryHistory history = lottoHistoryRepository.findById(status.data().payId()).orElseThrow(IllegalArgumentException::new);
+//                LotteryHistory history = lottoHistoryRepository.findById(status.data().payId());
+//                if(history == null) throw new IllegalArgumentException("해당 유저 없음");
                 history.setResult(status.data().rank());
                 history.setResultMoney(status.data().amount());
                 lottoHistoryRepository.save(history);
@@ -93,17 +95,6 @@ public class LotteryHistoryServiceImpl implements LotteryHistoryService {
             }
         }
     }
-
-
-//    //특정 내역 삭제하기(내역 ID)
-//    @Override
-//    public void deleteResult(String userId, Long payId) {
-//        if(lottoHistoryRepository.findByUserId(userId).isEmpty()) throw new IllegalArgumentException("해당 유저 없음");
-//        lottoHistoryRepository.findById(payId).orElseThrow(() ->new IllegalArgumentException("해당 결과 ID 없음"));
-//        lottoHistoryRepository.deleteById(payId);
-//    }
-
-
 
     @Override
     public void updateResult(String userId, Long payId, LotteryResultRequest request) {
