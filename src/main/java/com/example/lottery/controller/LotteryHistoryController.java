@@ -24,9 +24,11 @@ public class LotteryHistoryController {
     //특정 유저의 모든 내역 GET
     @GetMapping("{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public HistoryPageResponse getAllResult(@PathVariable("userId") String userId,
-                                            @RequestParam(name = "page", defaultValue = "0",required = false) Integer page,
-                                            @RequestParam(name = "pageSize", defaultValue = "10",required = false) Integer pageSize) {
+    public HistoryPageResponse getAllResult(
+            @PathVariable("userId") String userId,
+            @RequestParam(name = "page", defaultValue = "0",required = false) Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "10",required = false) Integer pageSize
+    ) {
 
         return historyService.getAllResult(userId,page,pageSize);
     }
